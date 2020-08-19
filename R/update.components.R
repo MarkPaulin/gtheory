@@ -12,10 +12,10 @@ update.components <- function(object, data, colname.objects, colname.scores, ...
     components.objects[[name.object]] <- components
     data.keep <- data[[colname.objects]] == name.object & is.na(data[[colname.scores]]) == FALSE
     sources.keep <- grepl(pattern = "Residual", x = components.objects[[name.object]]$source)
-    n.source <- length(data[data.keep, colname.objects])
+    n.source <- length(data[[colname.objects]][data.keep])
     components.objects[[name.object]][sources.keep, "n"] <- n.source
     for(facet in facets) {
-      n.source <- length(unique(data[data.keep, facet]))
+      n.source <- length(unique(data[[facet]][data.keep]))
       sources.keep <- grepl(pattern = facet, x = components.objects[[name.object]]$source)
       if(facet %in% components.objects[[name.object]]$source) {
         components.objects[[name.object]]$n <- ifelse(
