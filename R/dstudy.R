@@ -104,7 +104,7 @@ dstudy.dstudy <- function(x, colname.objects, weights = NULL, ...) {
           colname.objects = colname.objects
         )
       }, 
-      simplify = F
+      simplify = FALSE
     )
     dstudy.out$between$var.universe <- dstudy.out$between$var.obs
     diag(dstudy.out$between$var.universe) <- sapply(
@@ -177,7 +177,7 @@ dstudy.dstudy <- function(x, colname.objects, weights = NULL, ...) {
       FUN = function(stratum) {
         stratum["components"]
       }, 
-      simplify = F
+      simplify = FALSE
     )
     if(is.null(weights)) {
       weights <- rep(1, length(strata)) / length(strata)
@@ -211,7 +211,7 @@ dstudy.dstudy <- function(x, colname.objects, weights = NULL, ...) {
     dstudy.out$composite[["sem.abs"]] <- sqrt(dstudy.out$composite$var.error.abs)
     dstudy.out$composite[["see.abs"]] <- dstudy.out$composite$sem.abs * 
       sqrt(dstudy.out$composite$dependability)
-    #dstudy.out$composite <- sapply(X = dstudy.out$composite, FUN = as.numeric, simplify = F)
+    #dstudy.out$composite <- sapply(X = dstudy.out$composite, FUN = as.numeric, simplify = FALSE)
     dstudy.out
   } else {
     dstudy.out <- dstudy(

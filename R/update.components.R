@@ -6,11 +6,11 @@
 update.components <- function(object, data, colname.objects, colname.scores, ...) {
   components <- object
   facets <- unique(unlist(sapply(components$source, strsplit, split = ":")))
-  facets <- facets[facets %in% c(colname.objects, "Residual") == F]
+  facets <- facets[facets %in% c(colname.objects, "Residual") == FALSE]
   components.objects <- list()
-  for(name.object in unique(data[, colname.objects])) {
+  for(name.object in unique(data[[colname.objects]])) {
     components.objects[[name.object]] <- components
-    data.keep <- data[, colname.objects] == name.object & is.na(data[, colname.scores]) == F
+    data.keep <- data[[colname.objects]] == name.object & is.na(data[[colname.scores]]) == FALSE
     sources.keep <- grepl(pattern = "Residual", x = components.objects[[name.object]]$source)
     n.source <- length(data[data.keep, colname.objects])
     components.objects[[name.object]][sources.keep, "n"] <- n.source
@@ -25,7 +25,7 @@ update.components <- function(object, data, colname.objects, colname.scores, ...
         )
       } else {
         components.objects[[name.object]][sources.keep, "n"] <- apply(
-          components.objects[[name.object]][sources.keep, "n", drop = F], 
+          components.objects[[name.object]][sources.keep, "n", drop = FALSE], 
           1, 
           function(x) max(n.source, x)
         )
@@ -53,7 +53,7 @@ update.components <- function(object, data, colname.objects, colname.scores, ...
       )
     )
     vars.keep <- names(components) != "n"
-    components.obs <- merge(components[, vars.keep], components.obs, by.x = "source", by.y = 0, sort = F)
+    components.obs <- merge(components[, vars.keep], components.obs, by.x = "source", by.y = 0, sort = FALSE)
     components.obs$var <- components.obs$var / components.obs$n
     components.obs$percent <- round(components.obs$var / 
       sum(components.obs$var) * 100, 1)
@@ -70,7 +70,7 @@ update.components <- function(object, data, colname.objects, colname.scores, ...
           "objects" = names(objects.components)[objects.components]
         )
       }, 
-      simplify = F
+      simplify = FALSE
     )
   }
   components.obs

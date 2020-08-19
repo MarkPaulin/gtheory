@@ -10,8 +10,8 @@ update.gstudy <- function(object, data, colname.objects, colname.scores, colname
       stop("Please specify the name of the column containing strata.")
     } else {
       for(stratum in names(dstudy.out$within)) {
-        cases.keep <- is.na(data[, colname.strata]) == F & 
-          data[, colname.strata] == stratum
+        cases.keep <- is.na(data[[colname.strata]]) == FALSE & 
+          data[[colname.strata]] == stratum
         dstudy.out$within[[stratum]][["components"]] <- update(
           object = dstudy.out$within[[stratum]][["components"]], 
           data = data[cases.keep, ], 

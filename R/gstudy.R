@@ -34,23 +34,23 @@ gstudy <- function(data, ...) {
 #' @method gstudy data.frame
 #' @export
 gstudy.data.frame <- function(data, formula, colname.strata = NULL, colname.objects = NULL, 
-  keep.mer = F, ...) {
-  if(is.null(colname.strata) == F & is.null(colname.objects)) {
-    warning("Observed-score covariance was not calculated.\nWhich column contains objects of measurement?", call. = F)
+  keep.mer = FALSE, ...) {
+  if(is.null(colname.strata) == FALSE & is.null(colname.objects)) {
+    warning("Observed-score covariance was not calculated.\nWhich column contains objects of measurement?", call. = FALSE)
   }
   if(class(formula) != "formula") formula <- as.formula(formula)
-  if(is.null(colname.strata) == F) {
+  if(is.null(colname.strata) == FALSE) {
     strata <- unique(data[, colname.strata])
     data <- sapply(
       X = strata, 
       FUN = function(name.stratum) {
-        cases.keep <- is.na(data[, colname.strata]) == F & 
+        cases.keep <- is.na(data[, colname.strata]) == FALSE & 
           data[, colname.strata] == name.stratum
         data.stratum <- data[cases.keep, ]
         class(data.stratum) <- c("univariate", class(data.stratum))
         data.stratum
       }, 
-      simplify = F
+      simplify = FALSE
     )
     names(data) <- strata
     class(data) <- c("multivariate", class(data))
@@ -71,7 +71,7 @@ gstudy.data.frame <- function(data, formula, colname.strata = NULL, colname.obje
 #' @method gstudy univariate
 #' @export
 gstudy.univariate <- function(data, formula, colname.strata = NULL, colname.objects = NULL, 
-  keep.mer = F, ...) {
+  keep.mer = FALSE, ...) {
   lmer.out <- lmer(data = data, formula = formula, ...)
   gstudy.out <- as.data.frame(VarCorr(lmer.out))
   gstudy.out <- gstudy.out[, c("grp", "vcov")]
@@ -81,7 +81,7 @@ gstudy.univariate <- function(data, formula, colname.strata = NULL, colname.obje
   class(gstudy.out) <- c("components", class(gstudy.out))
   if(keep.mer) attributes(gstudy.out)$mer <- lmer.out
   gstudy.out <- list("components" = gstudy.out)
-  if(is.null(colname.strata) == F & is.null(colname.objects) == F) {
+  if(is.null(colname.strata) == FALSE & is.null(colname.objects) == FALSE) {
     x <- model.matrix(
       object = as.formula(paste("~ - 1 +", colname.objects)), 
       data = data
@@ -100,7 +100,7 @@ gstudy.univariate <- function(data, formula, colname.strata = NULL, colname.obje
 #' @method gstudy multivariate
 #' @export
 gstudy.multivariate <- function(data, formula, colname.strata = NULL, colname.objects = NULL, 
-  keep.mer = F, ...) {
+  keep.mer = FALSE, ...) {
   gstudy.out <- list()
   for(name.stratum in names(data)) {
     gstudy.out[[name.stratum]] <- gstudy(
@@ -110,14 +110,14 @@ gstudy.multivariate <- function(data, formula, colname.strata = NULL, colname.ob
       colname.objects = colname.objects, 
       keep.mer = keep.mer
     )
-    if(is.null(colname.objects) == F) {
+    if(is.null(colname.objects) == FALSE) {
       if(name.stratum == names(data)[1]) {
         scores.obs <- gstudy.out[[name.stratum]]$scores.obs
         colnames(scores.obs) <- name.stratum
       } else {
         scores.obs.temp <- gstudy.out[[name.stratum]]$scores.obs
         colnames(scores.obs.temp) <- name.stratum
-        scores.obs <- merge(scores.obs, scores.obs.temp, by = 0, all = T, sort = F)
+        scores.obs <- merge(scores.obs, scores.obs.temp, by = 0, all = T, sort = FALSE)
         rownames(scores.obs) <- scores.obs$Row.names
         vars.keep <- names(scores.obs) != "Row.names"
         scores.obs <- scores.obs[, vars.keep]
@@ -126,7 +126,7 @@ gstudy.multivariate <- function(data, formula, colname.strata = NULL, colname.ob
     }
   }
   gstudy.out <- list("within" = gstudy.out)
-  if(is.null(colname.objects) == F) {
+  if(is.null(colname.objects) == FALSE) {
     scores.obs <- as.matrix(scores.obs)
     #gstudy.out$between$scores.obs <- scores.obs
     var.obs <- var(scores.obs)
